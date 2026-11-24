@@ -1,0 +1,19 @@
+---
+/**
+ * A self-check question. Put the question text first, then <Hint n={1}>…</Hint> rungs,
+ * an <Answer>…</Answer>, and optionally an <AnswerCheck />. (Named slots are not used:
+ * they do not pass through MDX reliably.)
+ */
+interface Props {
+  n?: number;
+}
+const { n } = Astro.props;
+---
+<div class="ladder">
+  {n !== undefined && <span class="label">Question {n}</span>}
+  <slot />
+</div>
+<style>
+  .ladder { margin: 1.6em 0 2em; }
+  .label { display: block; margin-bottom: 2px; }
+</style>

@@ -1,0 +1,90 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { curriculum } from '../../data/curriculum';
+import { url } from '../../lib/url';
+
+export async function getStaticPaths() {
+  const lessons = await getCollection('lessons');
+  return lessons.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const flat = curriculum.flatMap((p) => p.lessons);
+const idx = flat.findIndex((l) => l.id === d.id);
+const prev = flat[idx - 1];
+const next = flat[idx + 1];
+const link = (l?: { slug?: string }) => (l?.slug ? url(`lessons/${l.slug}/`) : undefined);
+---
+<Base title={`${d.id} · ${d.title}`} description={d.hook}>
+  <article class="wrap">
+    <header class="prose head">
+      <p class="label">{d.part} · Lesson {d.id}{d.detour && ' · Detour'}</p>
+      <h1>{d.title}</h1>
+      <p class="hook">{d.hook}</p>
+      <p class="meta">
+        <span>≈ {d.estHours} h</span>
+        {d.widgets.length > 0 && <span>Widgets: {d.widgets.join(', ')}</span>}
+      </p>
+      {d.prereqs.length > 0 && (
+        <p class="pre"><span class="label">You need</span>
+          {d.prereqs.map((p) => {
+            const target = flat.find((l) => l.id === p.lesson);
+            const href = target?.slug ? url(`lessons/${target.slug}/`) : p.lesson !== undefined ? url(`#lesson-${p.lesson}`) : undefined;
+            const text = `${p.label}${p.lesson !== undefined ? ` · Lesson ${p.lesson}` : ''}`;
+            return href ? <a class="chip" href={href}>{text}</a> : <span class="chip">{text}</span>;
+          })}
+        </p>
+      )}
+      {d.firstPassOK && <p class="fp">It is fine not to fully follow this lesson on a first pass. Get the picture, and come back.</p>}
+    </header>
+
+    <div class="prose body">
+      <Content />
+      <p class="pass-note pass-only p3">Pass 3: the exercise companion for this lesson's section of the book arrives in Phase 7.</p>
+
+      <div class="finish no-print">
+        <button class="btn" id="mark-read" type="button" data-id={d.id} aria-pressed="false">Mark this lesson as read</button>
+      </div>
+      <nav class="pager no-print" aria-label="Lessons">
+        {prev && (link(prev) ? <a href={link(prev)}>← {prev.id} · {prev.title}</a> : <span>← {prev.id} · {prev.title} <em>(not written yet)</em></span>)}
+        {next && (link(next) ? <a href={link(next)}>{next.id} · {next.title} →</a> : <span>{next.id} · {next.title} <em>(not written yet)</em> →</span>)}
+      </nav>
+    </div>
+  </article>
+</Base>
+
+<script is:inline>
+  (() => {
+    const btn = document.getElementById('mark-read');
+    if (!btn) return;
+    const id = Number(btn.dataset.id);
+    const load = () => { try { return JSON.parse(localStorage.getItem('rp-read') || '[]'); } catch { return []; } };
+    const paint = () => {
+      const on = load().includes(id);
+      btn.setAttribute('aria-pressed', String(on));
+      btn.textContent = on ? '✓ Marked as read (tap to undo)' : 'Mark this lesson as read';
+    };
+    btn.addEventListener('click', () => {
+      const cur = load();
+      const nextList = cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id];
+      try { localStorage.setItem('rp-read', JSON.stringify(nextList)); } catch {}
+      paint();
+    });
+    paint();
+  })();
+</script>
+
+<style>
+  .head { padding-top: 16px; }
+  .hook { font-size: 1.18em; font-style: italic; color: var(--ink-2); }
+  .meta, .pre { font-family: var(--sans); font-size: 0.86rem; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+  .pre .chip { white-space: normal; text-decoration: none; padding: 4px 10px; min-height: 32px; display: inline-flex; align-items: center; }
+  .pre a.chip { color: var(--accent); border-color: var(--accent); }
+  .fp { font-family: var(--sans); font-size: 0.9rem; background: var(--ok-bg); border-radius: 8px; padding: 8px 12px; }
+  .finish { margin: 2.5em 0 1em; }
+  .pager { display: flex; flex-direction: column; gap: 10px; font-family: var(--sans); font-size: 0.92rem; border-top: 1px solid var(--rule); padding-top: 16px; color: var(--ink-3); }
+  @media (min-width: 720px) { .pager { flex-direction: row; justify-content: space-between; } }
+</style>

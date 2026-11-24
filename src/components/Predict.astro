@@ -1,0 +1,50 @@
+---
+/**
+ * "Predict, then play". The learner must commit to one option before the explanation appears.
+ * Without JavaScript the explanation is simply visible.
+ */
+interface Props {
+  question: string;
+  options: string[];
+  /** index of the right option */
+  correct: number;
+}
+const { question, options, correct } = Astro.props;
+const name = `pr-${Math.random().toString(36).slice(2, 8)}`;
+---
+<fieldset class="predict" data-correct={correct}>
+  <legend><span class="label">Predict first</span> {question}</legend>
+  <div class="opts">
+    {options.map((o, i) => (
+      <label><input type="radio" name={name} value={i} /> <span>{o}</span></label>
+    ))}
+  </div>
+  <p class="verdict" aria-live="polite"></p>
+  <div class="why"><slot /></div>
+</fieldset>
+<script>
+  for (const box of document.querySelectorAll<HTMLFieldSetElement>('fieldset.predict')) {
+    const why = box.querySelector<HTMLElement>('.why')!;
+    const verdict = box.querySelector<HTMLElement>('.verdict')!;
+    why.hidden = true;
+    box.addEventListener('change', (e) => {
+      const input = e.target as HTMLInputElement;
+      const right = input.value === box.dataset.correct;
+      verdict.textContent = right ? 'Yes.' : 'Not quite. Read on, then try it in the widget.';
+      verdict.dataset.ok = String(right);
+      why.hidden = false;
+    });
+  }
+</script>
+<style>
+  .predict { border: 1px dashed var(--ink-3); border-radius: var(--radius); padding: 10px 16px 6px; margin: 1.6em 0; min-width: 0; }
+  legend { padding: 0 6px; font-weight: 600; }
+  legend .label { color: var(--c-third); margin-right: 6px; }
+  .opts { display: grid; gap: 2px; margin: 6px 0; font-family: var(--sans); font-size: 0.96rem; }
+  .opts label { display: flex; gap: 10px; align-items: center; min-height: 44px; cursor: pointer; }
+  .opts input { width: 20px; height: 20px; accent-color: var(--accent); flex: none; }
+  .verdict { font-family: var(--sans); font-weight: 650; margin: 4px 0; min-height: 0; }
+  .verdict:empty { display: none; }
+  .verdict[data-ok='true'] { color: var(--c-q); }
+  .verdict[data-ok='false'] { color: var(--c-p); }
+</style>

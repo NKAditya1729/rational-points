@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const terms = (await getCollection('glossary')).sort((a, b) => a.data.term.localeCompare(b.data.term));
+---
+<Base title="Glossary" description="Every technical term used in the lessons, defined in plain words.">
+  <div class="wrap">
+    <div class="prose">
+      <p class="label">Reference</p>
+      <h1>Glossary</h1>
+      <p>Every underlined term in a lesson opens one of these. The list grows as lessons are added.</p>
+      <dl>
+        {terms.map((t) => (
+          <div id={t.id}>
+            <dt>{t.data.term}</dt>
+            <dd>{t.data.short} {t.data.lesson !== undefined && <span class="l">Lesson {t.data.lesson}.</span>}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </div>
+</Base>
+<style>
+  dl > div { padding: 14px 0; border-top: 1px solid var(--rule); scroll-margin-top: 16px; }
+  dl > div:target { background: var(--note-bg); padding-inline: 12px; border-radius: 8px; }
+  dt { font-weight: 700; }
+  dd { margin: 2px 0 0; }
+  .l { font-family: var(--sans); font-size: 0.82rem; color: var(--ink-2); }
+</style>

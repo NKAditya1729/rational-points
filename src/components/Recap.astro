@@ -1,0 +1,12 @@
+---
+/** "From earlier lessons": the few facts this lesson relies on, restated so the page stands alone. */
+---
+<aside class="recap card" aria-labelledby="recap-h">
+  <h2 id="recap-h" class="label">From earlier lessons</h2>
+  <slot />
+</aside>
+<style>
+  .recap { border-left: 5px solid var(--oi-green); background: var(--ok-bg); border-color: transparent; border-left-color: var(--oi-green); padding-bottom: 4px; }
+  h2 { margin: 0 0 8px; font-size: 0.74rem; color: var(--ink); }
+  .recap :global(ul) { padding-left: 1.1em; margin: 0 0 0.8em; }
+</style>

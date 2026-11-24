@@ -1,0 +1,7 @@
+---
+interface Props {
+  n: number;
+}
+const { n } = Astro.props;
+---
+<details class="hint"><summary>Hint {n}</summary><div><slot /></div></details>

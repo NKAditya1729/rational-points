@@ -1,0 +1,88 @@
+---
+import Base from '../layouts/Base.astro';
+import { curriculum } from '../data/curriculum';
+import { url } from '../lib/url';
+
+const total = curriculum.reduce((n, p) => n + p.lessons.length, 0);
+const ready = curriculum.flatMap((p) => p.lessons).filter((l) => l.slug);
+---
+<Base title="Curriculum">
+  <div class="wrap">
+    <section class="hero prose">
+      <p class="label">A study companion to Silverman &amp; Tate</p>
+      <h1>Rational Points on Elliptic Curves</h1>
+      <p class="lede">
+        Take a cubic equation such as <span class="eq">y² = x³ − 2</span> and ask for the solutions that are fractions.
+        That one question leads through geometry, algebra, analysis and number theory, and ends at Fermat’s Last Theorem.
+        This site walks the whole road in {total} lessons, each built around something you can drag, step through and break.
+      </p>
+      <p>
+        <a class="btn primary" href={url(`lessons/${ready[0].slug}/`)}>Open the sample lesson →</a>
+      </p>
+      <p class="status">
+        <strong>Build status:</strong> Phase 0. The maths engine, design system and one sample lesson
+        (Lesson {ready[0].id}) are live. The other lessons are listed below and arrive phase by phase.
+      </p>
+    </section>
+
+    <section class="prose" aria-labelledby="how-h">
+      <h2 id="how-h">How to use it</h2>
+      <ol>
+        <li><strong>Pass 1 — the site alone.</strong> Read a lesson, play with its widgets, try the self-check questions.</li>
+        <li><strong>Pass 2 — site and book.</strong> After each lesson, read the pages named on its “Now read” card.</li>
+        <li><strong>Pass 3 — add the exercises.</strong> Work the book’s problems with the hint ladders here.</li>
+        <li><strong>Pass 4 — book alone.</strong> Reread and re-solve without the site.</li>
+      </ol>
+    </section>
+
+    <section class="prose" aria-labelledby="cur-h">
+      <h2 id="cur-h">The curriculum</h2>
+      <p class="legend"><span class="chip detour">Detour</span> marks a background lesson on something the book assumes you already know.</p>
+      {curriculum.map((part) => (
+        <div class="part">
+          <h3>{part.name}</h3>
+          <p class="blurb">{part.blurb}</p>
+          <ol class="lessons">
+            {part.lessons.map((l) => (
+              <li class:list={{ ready: !!l.slug }} data-lesson={l.id} id={`lesson-${l.id}`}>
+                <span class="num">{l.id}</span>
+                {l.slug ? <a href={url(`lessons/${l.slug}/`)}>{l.title}</a> : <span class="t">{l.title}</span>}
+                {l.detour && <span class="chip detour">Detour</span>}
+                {l.slug && <span class="chip live">Ready</span>}
+                <span class="done" hidden>✓ read</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      ))}
+    </section>
+  </div>
+</Base>
+
+<script is:inline>
+  try {
+    const read = JSON.parse(localStorage.getItem('rp-read') || '[]');
+    for (const id of read) {
+      const el = document.querySelector(`[data-lesson="${id}"] .done`);
+      if (el) el.hidden = false;
+    }
+  } catch {}
+</script>
+
+<style>
+  .hero { padding: 24px 0 8px; }
+  .lede { font-size: 1.15em; }
+  .eq { white-space: nowrap; font-style: italic; }
+  .status { font-family: var(--sans); font-size: 0.9rem; color: var(--ink-2); background: var(--surface-2); border-radius: 8px; padding: 10px 14px; }
+  .legend { font-family: var(--sans); font-size: 0.9rem; color: var(--ink-2); }
+  .part h3 { margin-bottom: 0.1em; }
+  .blurb { color: var(--ink-2); margin-bottom: 0.6em; }
+  .lessons { list-style: none; padding: 0; margin: 0 0 1.5em; border-top: 1px solid var(--rule); }
+  .lessons li:target { background: var(--note-bg); }
+  .lessons li { scroll-margin-top: 12px; display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 10px; padding: 10px 0; margin: 0; border-bottom: 1px solid var(--rule); color: var(--ink-2); }
+  .lessons li.ready { color: var(--ink); }
+  .lessons a { font-weight: 600; }
+  .num { font-family: var(--sans); font-variant-numeric: tabular-nums; font-size: 0.85rem; width: 1.8em; color: var(--ink-3); flex: none; }
+  .t, .lessons a { flex: 1 1 14em; }
+  .done { font-family: var(--sans); font-size: 0.8rem; color: var(--c-q); font-weight: 650; }
+</style>

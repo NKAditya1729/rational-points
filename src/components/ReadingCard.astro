@@ -1,0 +1,42 @@
+---
+interface Props {
+  st?: { pages: string; sections: string; preview: string; watchFor?: string[] };
+  et?: { chapters: string; pages?: string; preview: string };
+}
+const { st, et } = Astro.props;
+---
+<details class="reading-wrap reading card" open>
+  <summary><h2 class="label">Now read</h2><span class="hint-closed">Folded in pass 1 (site alone). Tap to open, or switch to pass 2 in the header.</span></summary>
+  {st && (
+    <div class="book">
+      <p class="where"><strong>Silverman–Tate</strong> <span class="pp">pp. {st.pages}</span> <span class="sec">{st.sections}</span></p>
+      <p>{st.preview}</p>
+      {st.watchFor && st.watchFor.length > 0 && (
+        <>
+          <p class="label">Watch for</p>
+          <ul>{st.watchFor.map((w) => <li>{w}</li>)}</ul>
+        </>
+      )}
+    </div>
+  )}
+  {et && (
+    <div class="book">
+      <p class="where"><strong>Elliptic Tales</strong> {et.pages && <span class="pp">pp. {et.pages}</span>} <span class="sec">{et.chapters}</span></p>
+      <p>{et.preview}</p>
+    </div>
+  )}
+  <p class="fine">Page numbers are the printed ones in the 2nd edition of Silverman–Tate and the Princeton edition of Elliptic Tales, checked against the PDFs.</p>
+</details>
+<style>
+  summary { cursor: pointer; min-height: 44px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin-bottom: 8px; }
+  summary h2 { display: inline; }
+  .hint-closed { font-family: var(--sans); font-size: 0.84rem; color: var(--ink-2); }
+  details[open] .hint-closed { display: none; }
+  .reading { border-top: 4px solid var(--accent); }
+  h2 { margin: 0; font-size: 0.74rem; }
+  .book + .book { border-top: 1px solid var(--rule); padding-top: 14px; }
+  .where { margin-bottom: 0.4em; font-family: var(--sans); font-size: 0.98rem; }
+  .pp { font-variant-numeric: tabular-nums; font-weight: 650; color: var(--accent); margin-left: 4px; }
+  .sec { color: var(--ink-2); margin-left: 4px; }
+  .fine { font-family: var(--sans); font-size: 0.8rem; color: var(--ink-2); }
+</style>

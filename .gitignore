@@ -1,0 +1,10 @@
+docs/private/
+*.pdf
+node_modules/
+dist/
+.astro/
+.DS_Store
+test-results/
+playwright-report/
+.env*
+docs/screenshots/*-full.png

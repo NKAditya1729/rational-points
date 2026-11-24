@@ -1,0 +1,36 @@
+---
+/** A glossary term: tap or click to open its definition in a small card. */
+import { getEntry } from 'astro:content';
+import { url } from '../lib/url';
+
+interface Props {
+  id: string;
+}
+const { id } = Astro.props;
+const entry = await getEntry('glossary', id);
+if (!entry) throw new Error(`Glossary term "${id}" does not exist in src/content/glossary/`);
+const pid = `g-${id}-${Math.random().toString(36).slice(2, 8)}`;
+---
+<button type="button" class="term" popovertarget={pid}><slot>{entry.data.term}</slot></button><span popover id={pid} class="term-card" role="note">
+  <strong class="label">{entry.data.term}</strong>
+  <span class="def">{entry.data.short}</span>
+  <span class="more">
+    {entry.data.lesson !== undefined && <span>Introduced in Lesson {entry.data.lesson}.</span>}
+    <a href={url(`glossary/#${id}`)}>Glossary</a>
+  </span>
+</span>
+<style>
+  .term {
+    font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: help;
+    text-decoration: underline dotted var(--accent); text-decoration-thickness: 2px; text-underline-offset: 0.22em;
+  }
+  .term-card {
+    inset: auto 12px 12px 12px; margin: 0 auto; width: auto; max-width: 34rem;
+    border: 1px solid var(--rule); border-radius: 12px; padding: 14px 16px;
+    background: var(--surface); color: var(--ink); box-shadow: 0 10px 40px rgb(0 0 0 / 0.25);
+    font-family: var(--serif); font-size: 1rem; line-height: 1.5; font-style: normal; font-weight: 400; text-align: left;
+  }
+  .term-card:popover-open { display: grid; gap: 6px; }
+  .term-card::backdrop { background: rgb(0 0 0 / 0.18); }
+  .more { font-family: var(--sans); font-size: 0.82rem; color: var(--ink-2); display: flex; gap: 12px; flex-wrap: wrap; }
+</style>

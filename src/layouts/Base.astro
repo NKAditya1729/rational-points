@@ -1,0 +1,88 @@
+---
+import '../styles/global.css';
+import 'katex/dist/katex.min.css';
+import { url } from '../lib/url';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = 'A storytelling, interactive study companion to Silverman & Tate, Rational Points on Elliptic Curves.' } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} · Rational Points</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href={url('favicon.svg')} />
+    <script is:inline>
+      // Apply the saved theme before first paint to avoid a flash.
+      try {
+        const t = localStorage.getItem('rp-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+        const pass = localStorage.getItem('rp-pass');
+        document.documentElement.dataset.pass = ['1', '2', '3', '4'].includes(pass) ? pass : '1';
+      } catch { document.documentElement.dataset.pass = '1'; }
+    </script>
+  </head>
+  <body>
+    <a class="btn" href="#main" style="position:absolute;left:-9999px" onfocus="this.style.left='8px';this.style.top='8px';this.style.zIndex=20" onblur="this.style.left='-9999px'">Skip to content</a>
+    <header class="site-header">
+      <a class="brand" href={url()}>
+        <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+          <path d="M22 2C14 7 9 9.5 9 13s5 6 13 11M4.2 13a2.6 3.4 0 1 0 0.01 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="13.2" cy="6.6" r="2" fill="var(--c-p)"/><circle cx="12.4" cy="19" r="2" fill="var(--c-sum)"/>
+        </svg>
+        <span>Rational Points</span>
+      </a>
+      <nav aria-label="Site">
+        <a class="wide-only" href={url()}>Curriculum</a>
+        <a class="wide-only" href={url('glossary/')}>Glossary</a>
+        <label class="pass">
+          <span>Pass</span>
+          <select id="pass-select" aria-label="Which study pass you are on">
+            <option value="1">1 · site alone</option>
+            <option value="2">2 · site + book</option>
+            <option value="3">3 · + exercises</option>
+            <option value="4">4 · book alone</option>
+          </select>
+        </label>
+        <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch between light and dark theme">
+          <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2a8 8 0 1 0 0 16z" fill="currentColor"/><circle cx="10" cy="10" r="7.2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+        </button>
+      </nav>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer">
+      <div class="wrap">
+        <p><a href={url()}>Curriculum</a> · <a href={url('glossary/')}>Glossary</a></p>
+        <p>An independent study companion. All explanations here are original; the books are cited by page and never reproduced. Read it alongside your own copies of Silverman &amp; Tate, <em>Rational Points on Elliptic Curves</em> (2nd ed.) and Ash &amp; Gross, <em>Elliptic Tales</em>.</p>
+      </div>
+    </footer>
+    <script is:inline>
+      (() => {
+        const sel = document.getElementById('pass-select');
+        sel.value = document.documentElement.dataset.pass || '1';
+        const apply = () => {
+          const pass = document.documentElement.dataset.pass;
+          // pass 1 is "site alone": reading cards start folded, and open from pass 2 on
+          for (const d of document.querySelectorAll('details.reading-wrap')) d.open = pass !== '1';
+        };
+        sel.addEventListener('change', () => {
+          document.documentElement.dataset.pass = sel.value;
+          try { localStorage.setItem('rp-pass', sel.value); } catch {}
+          apply();
+        });
+        apply();
+      })();
+      document.getElementById('theme-toggle').addEventListener('click', () => {
+        const root = document.documentElement;
+        const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        root.dataset.theme = dark ? 'light' : 'dark';
+        try { localStorage.setItem('rp-theme', root.dataset.theme); } catch {}
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,307 @@
+---
+id: 10
+part: "Part I · Geometry and the group law"
+title: "Chord-and-tangent: the group law is born"
+hook: "On a conic, one rational point hands you all the others. On a cubic that trick fails, and what replaces it is stranger and better: the points can be added."
+prereqs:
+  - { label: "Lines meeting curves, with multiplicity", lesson: 8 }
+  - { label: "What a group is", lesson: 9 }
+  - { label: "The point at infinity", lesson: 6 }
+detour: false
+readST:
+  pages: "8–13"
+  sections: "§1.2, up to the point where associativity is raised"
+  preview: "The book builds the same construction on a general cubic, with no special equation and with O chosen freely. It first defines the raw operation (join two points, take the third), shows that this alone is not a group, and then repairs it by fixing a point O. It checks the identity and the negatives with pictures."
+  watchFor:
+    - "The book's cubic is not yet in the form y² = x³ + ax + b, and its O is an ordinary point of the curve. Switch the widget to “Choose your own O” to see the book's pictures move. The mirror-image rule is the special case with O at infinity."
+    - "A preview of the nine-point fact about two cubics appears on p. 10. It is the engine of the associativity argument in Lesson 11; read it lightly for now."
+    - "The recipe for the negative of a point uses the tangent line at O. Compare it with the mirror-image rule and convince yourself they agree when O is at infinity."
+readET:
+  chapters: "Ch. 6 (all) and Ch. 8 §1"
+  pages: "95–99 and 116–119"
+  preview: "Read these first. Chapter 6 explains why cubics are the natural next step after lines and conics. Chapter 8 §1 states the group law in words and pictures, without proofs."
+widgets: ["W12"]
+exercises: []
+firstPassOK: false
+estHours: 3
+---
+import Callout from '../../components/Callout.astro';
+import Figure from '../../components/Figure.astro';
+import HintLadder from '../../components/HintLadder.astro';
+import Hint from '../../components/Hint.astro';
+import Answer from '../../components/Answer.astro';
+import Recap from '../../components/Recap.astro';
+import Predict from '../../components/Predict.astro';
+import ReadingCard from '../../components/ReadingCard.astro';
+import Term from '../../components/Term.astro';
+import ChordTangent from '../../widgets/W12-ChordTangent.tsx';
+import AnswerCheck from '../../widgets/AnswerCheck.tsx';
+
+<Recap>
+- **Lesson 3.** On a conic, a line with rational slope through one <Term id="rational-point">rational point</Term> meets the conic again in a rational point. One point gives all the others.
+- **Lesson 6.** The plane is extended by <Term id="point-at-infinity">points at infinity</Term>, one for each direction. All vertical lines meet at a single one of them.
+- **Lesson 8.** A line meets a <Term id="cubic-curve">cubic curve</Term> in exactly three points, provided points at infinity are included and touching is <Term id="multiplicity">counted twice</Term>.
+- **Lesson 9.** A <Term id="group">group</Term> is a set with an operation that is <Term id="associative">associative</Term>, has an <Term id="identity-element">identity element</Term>, and gives every element an inverse.
+</Recap>
+
+## Where we are
+
+In Lesson 3 one rational point on a circle gave us every rational point: draw a line with rational slope through it, and the *other* place the line meets the circle is again rational. The reason was simple algebra. A line meets a conic where a quadratic equation holds, and if a quadratic with rational coefficients has one rational root, its other root is rational too.
+
+Now try the same on a cubic curve such as
+
+$$
+y^2 = x^3 - 7x + 10 .
+$$
+
+A line meets a cubic where a **cubic** equation holds, so there are three meeting points (Lesson 8). Knowing one rational root of a cubic tells you almost nothing about the other two: they can be a pair like $1 \pm \sqrt{2}$, irrational, but adding up to something rational. One point is not enough.
+
+Two points are.
+
+## By the end of this lesson you can
+
+- explain why the line through two rational points of a cubic meets it in a third rational point;
+- carry out the chord construction and the tangent construction by hand, with exact fractions;
+- say what the point $O$ is, and why "reflect in the $x$-axis" is the same as "join to $O$";
+- check three of the four group axioms for this addition, and say which one is still owed.
+
+## The key fact: two rational points give a third
+
+Take a cubic curve whose equation has rational coefficients, and two rational points $P$ and $Q$ on it. The line through them has a rational slope and a rational intercept, so it is $y = \lambda x + \nu$ with $\lambda, \nu$ rational. Substitute that into the curve's equation. You get a cubic equation in $x$ alone, with rational coefficients:
+
+$$
+x^3 + c_2 x^2 + c_1 x + c_0 = 0 .
+$$
+
+Its three roots are the $x$-coordinates of the three meeting points. Call them $x_1, x_2, x_3$. Then the cubic factors as $(x - x_1)(x - x_2)(x - x_3)$, and multiplying out and comparing the $x^2$ terms gives
+
+$$
+x_1 + x_2 + x_3 = -c_2 .
+$$
+
+This is the <Term id="sum-of-roots">sum of the roots</Term> rule. We know $x_1$ and $x_2$: they belong to $P$ and $Q$, and they are rational. So $x_3 = -c_2 - x_1 - x_2$ is rational, and then $y_3 = \lambda x_3 + \nu$ is rational as well.
+
+<Callout title="Notation" kind="note">
+The third meeting point of the line through $P$ and $Q$ is written $P * Q$. Read it as "$P$ star $Q$".
+</Callout>
+
+### Worked numbers
+
+On $y^2 = x^3 - 7x + 10$ take $P = (1, 2)$ and $Q = (3, 4)$. Both are on the curve: $1 - 7 + 10 = 4 = 2^2$ and $27 - 21 + 10 = 16 = 4^2$.
+
+The line through them has slope $(4 - 2)/(3 - 1) = 1$, so it is $y = x + 1$. Substituting,
+
+$$
+(x + 1)^2 = x^3 - 7x + 10
+\quad\Longrightarrow\quad
+x^3 - x^2 - 9x + 9 = 0 .
+$$
+
+The roots add up to $1$ (minus the coefficient of $x^2$). Two of them are $1$ and $3$, so the third is $1 - 1 - 3 = -3$, and on the line $y = -3 + 1 = -2$. So
+
+$$
+P * Q = (-3, -2).
+$$
+
+Check it against the curve: $(-3)^3 - 7(-3) + 10 = -27 + 21 + 10 = 4 = (-2)^2$. We never solved a cubic. We only used the sum of its roots.
+
+## Star is not yet addition
+
+It is tempting to declare $P * Q$ to be "the sum" and stop. Lesson 9 says what a sum must satisfy, and $*$ fails at the first hurdle: there is no identity element.
+
+An identity would be a point $E$ with $P * E = P$ for every $P$. Unpack that. The line through $P$ and $E$ would have to meet the curve at $P$, at $E$, and at $P$ *again*. A line that meets the curve twice at $P$ is the <Term id="tangent-line">tangent line</Term> at $P$. So the tangent line at every single point of the curve would have to pass through the one point $E$. Tangent lines to a cubic do not all pass through a common point, so no such $E$ exists.
+
+## The repair: choose a point and call it O
+
+Pick one point on the curve, once and for all, and name it $O$. Define
+
+$$
+P + Q \;=\; O * (P * Q).
+$$
+
+In words: join $P$ and $Q$, take the third point; then join *that* to $O$ and take the third point again.
+
+**$O$ is the identity.** Compute $P + O = O * (P * O)$. The line through $P$ and $O$ meets the curve at a third point; call it $T$. Now join $O$ to $T$. That is the *same line*, and its three meeting points are $O$, $T$ and $P$. The third one is $P$. So $P + O = P$.
+
+**The order does not matter** (the operation is <Term id="commutative">commutative</Term>). The line through $P$ and $Q$ is the line through $Q$ and $P$, so $P * Q = Q * P$ and therefore $P + Q = Q + P$.
+
+**Every point has a negative.** We will see this most easily in the special position described next.
+
+## Where O lives in our pictures
+
+The pages you will read in the book let $O$ be any point of a general cubic, exactly as above. The widget below can do that too. But there is one choice of curve and of $O$ that makes everything simpler, and from Lesson 12 on we always make it.
+
+Lesson 12 shows that any cubic with a rational point can be brought to the form $y^2 = x^3 + ax^2 + bx + c$, and that a shift in $x$ then removes the $x^2$ term to give $y^2 = x^3 + ax + b$. Every curve in this lesson is already in that last form (see <Term id="weierstrass-form">Weierstrass form</Term>). For these curves we take $O$ to be the point at infinity in the vertical direction, the place where all vertical lines meet. Lesson 12 also shows that this $O$ really is a point of the curve.
+
+With $O$ straight up at infinity, "the line through $O$ and $T$" is simply **the vertical line through $T$**. Where else does a vertical line meet $y^2 = x^3 + ax + b$? If $(x, y)$ is on the curve then so is $(x, -y)$, because only $y^2$ appears. So the third point is the mirror image of $T$ in the $x$-axis.
+
+That turns the definition into a recipe you can do with a ruler:
+
+1. Draw the line through $P$ and $Q$.
+2. Find the third point $P * Q$ where it meets the curve.
+3. Reflect it in the $x$-axis. That is $P + Q$.
+
+For the worked example, $P * Q = (-3, -2)$, so
+
+$$
+(1, 2) + (3, 4) = (-3, 2).
+$$
+
+**Negatives.** The mirror image of $P = (x, y)$ is the point $(x, -y)$. The line joining them is vertical, so it meets the curve at $P$, at its mirror image, and at $O$. Hence $P * (x, -y) = O$, and joining $O$ to $O$ and reflecting gives $O$ again. So $P + (x, -y) = O$: the mirror image is $-P$.
+
+## When P and Q coincide: the tangent
+
+What is $P + P$? There is no "line through $P$ and $P$" unless we say which one. The right choice is the **tangent line** at $P$. A tangent touches the curve twice at $P$ (Lesson 8), so it is the limit of the chords through $P$ and a second point sliding toward it. Its third meeting point is $P * P$, and reflecting gives $P + P$, written $2P$.
+
+For the slope, use <Term id="implicit-differentiation">implicit differentiation</Term> on $y^2 = x^3 + ax + b$: $2y\,y' = 3x^2 + a$, so
+
+$$
+\lambda = \frac{3x^2 + a}{2y} .
+$$
+
+### Worked numbers
+
+On $y^2 = x^3 - 2$ take $P = (3, 5)$; indeed $27 - 2 = 25$. The tangent slope is $\lambda = 27/10$. Substituting the tangent line into the curve gives a cubic whose $x^2$ coefficient is $-\lambda^2$, and whose roots are $3$, $3$ and the unknown $x_3$. So
+
+$$
+x_3 = \lambda^2 - 3 - 3 = \frac{729}{100} - 6 = \frac{129}{100},
+\qquad
+y_3 = 5 + \frac{27}{10}\left(\frac{129}{100} - 3\right) = \frac{383}{1000}.
+$$
+
+Reflect:
+
+$$
+2P = \left(\frac{129}{100},\; -\frac{383}{1000}\right).
+$$
+
+A point with one-digit coordinates has become one with three- and four-digit fractions in a single step. Keep that in mind. The speed at which the digits grow is the central tool of Part III.
+
+## Play with it
+
+Commit to a guess before you touch anything.
+
+<Predict question="Slide Q along the curve until it sits exactly on top of P. What does the line through them become?" options={["It disappears, because one point does not determine a line", "It becomes the tangent line at P", "It becomes vertical"]} correct={1}>
+The chords through $P$ and a nearby $Q$ settle down to one limiting line as $Q$ arrives: the tangent. Try 4 below shows it.
+</Predict>
+
+<Predict question="Put Q directly below P: same x, opposite y. Where is the third meeting point of the line?" options={["Halfway between them, on the x-axis", "There is none, so P + Q is undefined", "At infinity, so P + Q = O"]} correct={2}>
+The line is vertical, and all vertical lines pass through the point at infinity, which lies on the curve. That point is $O$. Try 3 below shows it.
+</Predict>
+
+<Figure id="W12" title="Chord-and-tangent addition">
+  <ChordTangent client:visible />
+</Figure>
+
+**What is drawn.** The dark curve is the set of real solutions of the equation on the selected button. The orange point is $P$ and the green point is $Q$. The amber line is the line through them. The pink point is the third meeting point $P * Q$. The dashed blue segment is the reflection, and the blue point is the answer, $P + Q$. The answer is also written in the strip directly under the picture. Small hollow dots mark rational points with small coordinates. The picture rescales itself so that the whole construction stays in view.
+
+**What to try.**
+
+1. Press **Replay** and watch the three steps for $(1,2) + (3,4)$: the line is drawn, a marker runs along it to the third point, and that point is carried across the $x$-axis. The strip should read $(-3, 2)$, the value computed above. **Back** and **Next step** let you take it one step at a time.
+2. Tap a hollow dot to send $P$ there, or drag $P$ and $Q$ and drop them on dots. Each time, both the third point and the sum land exactly on the curve.
+3. Drag $Q$ until it sits directly below $P$ (same $x$, opposite $y$). Watch the line become vertical.
+4. Press **Set Q = P**. The line becomes dashed: it is now the tangent.
+5. Choose $y^2 = x^3 - 2$. It opens already doubling $(3, 5)$. Then press **Move P to 2P** and keep adding, and watch the fractions.
+6. Choose **Custom** and set $a = -3$, $b = 2$.
+7. Go back to the first curve and press **Choose your own O**. A black square $O$ appears on the curve; this is the situation in the book's pictures. Step through the construction: step 3 is now "join $P * Q$ to $O$ and take the third point". Then drag $Q$ onto $O$.
+
+**What to notice.**
+
+- When every point is on a hollow dot, every number is an exact fraction. This is the key fact of this lesson, seen directly: rational in, rational out.
+- When a point is somewhere else on the curve, its coordinates are usually irrational, and the readout switches to decimals marked with ≈.
+- In try 3, the third point runs off to infinity and the strip reads $O$. A point plus its mirror image is $O$.
+- In try 5, numerators and denominators roughly quadruple in length with each doubling.
+- In try 6 the curve has a crossing point and the construction is switched off. There $4a^3 + 27b^2 = 0$. Such curves are called singular; a <Term id="non-singular">non-singular</Term> curve is one where this does not happen, and only those are allowed in this lesson.
+- In try 7, when $Q$ sits on $O$ the answer sits on $P$. Whatever point you choose as $O$ is the identity. The sums themselves change when you move $O$, but the rules they obey do not. With $O$ at infinity, step 3 collapses to a mirror image, which is why that choice is so convenient.
+
+**The exact mathematics behind it.** For $P = (x_1, y_1)$ and $Q = (x_2, y_2)$ on $y^2 = x^3 + ax + b$, the widget computes
+
+$$
+\lambda = \begin{cases} \dfrac{y_2 - y_1}{x_2 - x_1} & \text{if } x_1 \ne x_2, \\[2ex] \dfrac{3x_1^2 + a}{2y_1} & \text{if } P = Q \text{ and } y_1 \ne 0, \end{cases}
+\qquad
+x_3 = \lambda^2 - x_1 - x_2,
+\qquad
+y_3 = \lambda(x_1 - x_3) - y_1 ,
+$$
+
+and reports $P * Q = (x_3, -y_3)$ and, when $O$ is at infinity, $P + Q = (x_3, y_3)$. With your own $O$ it applies the same line-and-third-point step a second time, to $O$ and $P * Q$. The formula for $x_3$ is the sum-of-roots fact again: substituting $y = \lambda x + \nu$ gives a cubic whose $x^2$ coefficient is $-\lambda^2$. Lesson 13 derives these formulas in full. For exact points the arithmetic is done on whole-number numerators and denominators of any size, so nothing is rounded.
+
+**Edge cases.**
+
+- $x_1 = x_2$ but $y_1 = -y_2$: the line is vertical and $P + Q = O$.
+- $P = Q$ with $y_1 = 0$: the tangent itself is vertical, so $2P = O$. Try it on $y^2 = x^3 - x$ with $P = Q = (0, 0)$. Such points get their own lesson (16).
+- With your own $O$, either $P * Q$ or $P + Q$ can be the point at infinity. It is then an ordinary point of the curve, no longer the identity, and the widget says so.
+- If a point is extremely far away the picture stops growing and says so. The numbers stay exact.
+- Dragging moves a point to the nearest place on the curve, and snaps to a hollow dot when it is within a small distance. The picture holds still while your finger is down and refits when you let go.
+
+## The statement, and what is still owed
+
+<Callout title="Theorem (completed in Lesson 11)" kind="ok">
+Let $C$ be a <Term id="non-singular">non-singular</Term> cubic curve and $O$ a point on it. With $P + Q = O * (P * Q)$, the points of $C$ form a commutative group with identity $O$. If the equation of $C$ has rational coefficients and $O$ is a rational point, then the rational points of $C$ form a <Term id="subgroup">subgroup</Term>: the sum of two rational points is rational, and so is the negative of one.
+</Callout>
+
+Here is the scorecard against the axioms of Lesson 9.
+
+| Axiom | Status |
+|---|---|
+| The sum of two points is a point of the curve | Done: it is a third meeting point |
+| $P + Q = Q + P$ | Done |
+| $P + O = P$ | Done |
+| Every $P$ has a $-P$ with $P + (-P) = O$ | Done (mirror image) |
+| $(P + Q) + R = P + (Q + R)$ | **Not yet.** This is Lesson 11 |
+
+The last line is not a formality. Nothing in the ruler construction makes it obvious that adding three points in two different orders ends in the same place, and proving it takes a real geometric idea about nine points on a cubic.
+
+<Callout title="Two honest gaps" kind="warn">
+Two things were used and not proved here. First, that a line meets a cubic in exactly three points; this needs points at infinity and tangency counted properly (Lessons 6–8). Second, that the point at infinity really lies on $y^2 = x^3 + ax + b$ and behaves like any other point (Lesson 12).
+</Callout>
+
+<ReadingCard st={frontmatter.readST} et={frontmatter.readET} />
+
+## Check yourself
+
+Work these on paper first, then type your answer. The checker tells you which step to look at again.
+
+<p class="pass-note pass-only p4">Pass 4: hints and written answers are hidden. The answer checker still works.</p>
+
+<HintLadder n={1}>
+On $y^2 = x^3 - 7x + 10$, find $(1, 2) + (-3, 2)$.
+<Hint n={1}>Both points have $y = 2$. What is the line through them?</Hint>
+<Hint n={2}>Put $y = 2$ into the curve: $x^3 - 7x + 6 = 0$. There is no $x^2$ term, so the three roots add up to $0$.</Hint>
+<Hint n={3}>The third root is $0 - 1 - (-3) = 2$, so $P * Q = (2, 2)$. Now reflect.</Hint>
+<Answer>$(2, -2)$. Check: $8 - 14 + 10 = 4 = (-2)^2$.</Answer>
+<AnswerCheck client:visible a={-7} b={10} P={["1", "2"]} Q={["-3", "2"]} label="(1, 2) + (−3, 2) =" />
+</HintLadder>
+
+<HintLadder n={2}>
+On the same curve, find $2P$ for $P = (1, 2)$.
+<Hint n={1}>Use the tangent. Its slope is $(3x^2 + a)/(2y)$ with $a = -7$.</Hint>
+<Hint n={2}>$\lambda = (3 - 7)/4 = -1$. Then $x_3 = \lambda^2 - 1 - 1$.</Hint>
+<Hint n={3}>$x_3 = -1$. On the tangent line, $y = 2 + (-1)(-1 - 1) = 4$, so $P * P = (-1, 4)$.</Hint>
+<Answer>$2P = (-1, -4)$. Check: $-1 + 7 + 10 = 16 = (-4)^2$.</Answer>
+<AnswerCheck client:visible a={-7} b={10} P={["1", "2"]} Q={["1", "2"]} label="2 · (1, 2) =" />
+</HintLadder>
+
+<HintLadder n={3}>
+On $y^2 = x^3 - x$, find $(-1, 0) + (1, 0)$, and then find $2 \cdot (0, 0)$.
+<Hint n={1}>The line through $(-1,0)$ and $(1,0)$ is the $x$-axis. Where else does it meet the curve?</Hint>
+<Hint n={2}>$x^3 - x = x(x-1)(x+1)$, so the third point is $(0, 0)$. What is the mirror image of a point on the $x$-axis?</Hint>
+<Hint n={3}>For the doubling: at $(0,0)$ the slope formula has $2y = 0$ in the denominator. What kind of line is the tangent there?</Hint>
+<Answer>$(-1,0) + (1,0) = (0,0)$, since $(0,0)$ is its own mirror image. The tangent at $(0,0)$ is vertical, so $2 \cdot (0,0) = O$.</Answer>
+<AnswerCheck client:visible a={-1} b={0} P={["-1", "0"]} Q={["1", "0"]} label="(−1, 0) + (1, 0) =" />
+<AnswerCheck client:visible a={-1} b={0} P={["0", "0"]} Q={["0", "0"]} label="2 · (0, 0) =" />
+</HintLadder>
+
+<HintLadder n={4}>
+A line with rational slope passes through one rational point of a cubic with rational coefficients. Explain why its other two meeting points need not be rational, and what can be said about them.
+<Hint n={1}>Divide the cubic in $x$ by $(x - x_1)$. What is left?</Hint>
+<Hint n={2}>A quadratic with rational coefficients. What can its two roots look like?</Hint>
+<Answer>The other two $x$-coordinates are the roots of a quadratic with rational coefficients. They may be irrational, like $1 \pm \sqrt 2$. Their sum and their product are rational, and if one of them is rational so is the other.</Answer>
+</HintLadder>
+
+## Where this leads
+
+- **Lesson 11** pays the debt: associativity.
+- **Lesson 12** shows that any cubic with a rational point can be brought to the form $y^2 = x^3 + ax^2 + bx + c$, and that a shift in $x$ then removes the $x^2$ term to give $y^2 = x^3 + ax + b$. It also puts $O$ at infinity.
+- **Lesson 13** turns the ruler construction into formulas and uses them for long computations.
+- **Part III** asks the question that the doubling example raised. If you start from a few rational points and keep adding, do you reach all of them? Mordell's theorem says yes: finitely many points always suffice.
